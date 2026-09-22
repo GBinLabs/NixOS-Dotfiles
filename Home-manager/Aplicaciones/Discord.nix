@@ -1,0 +1,109 @@
+{
+  config,
+  lib,
+  ...
+}:
+{
+  options.Discord.enable = lib.mkEnableOption "Habilitar Discord";
+
+  config = lib.mkIf config.Discord.enable {
+    programs.nixcord = {
+      enable = true;
+
+      discord = {
+        enable = true;
+        vencord.enable = false;
+        equicord.enable = true;
+        krisp.enable = true;
+        openASAR.enable = false;
+      };
+
+      config = {
+        useQuickCss = true;
+        plugins = {
+          alwaysExpandRoles.enable = true;
+          betterGifPicker.enable = true;
+          betterSettings.enable = true;
+          betterUploadButton.enable = true;
+          biggerStreamPreview.enable = true;
+          callTimer = {
+            enable = true;
+            format = "human";
+          };
+          clearUrls.enable = true;
+          crashHandler.enable = true;
+          declutter.enable = true;
+          dontRoundMyTimestamps.enable = true;
+          equicordHelper.enable = true;
+          favoriteEmojiFirst.enable = true;
+          fixCodeblockGap.enable = true;
+          fixImagesQuality.enable = true;
+          fixYoutubeEmbeds.enable = true;
+          forceOwnerCrown.enable = true;
+          fullSearchContext.enable = true;
+          fullVcpfp.enable = true;
+          gifPaste.enable = true;
+          greetStickerPicker.enable = true;
+          hideChatButtons.enable = true;
+          hideMedia.enable = true;
+          hideServers.enable = true;
+          homeTyping.enable = true;
+          ignoreActivities = {
+            enable = true;
+            ignoreCompeting = true;
+            ignoreListening = false;
+            ignorePlaying = true;
+            ignoreWatching = true;
+          };
+          imageFilename.enable = true;
+          implicitRelationships.enable = true;
+          lastActive.enable = true;
+          memberCount.enable = true;
+          mentionAvatars.enable = true;
+          mutualGroupDms.enable = true;
+          newGuildSettings.enable = true;
+          newPluginsManager.enable = true;
+          noBlockedMessages.enable = true;
+          noDevtoolsWarning.enable = true;
+          noF1.enable = true;
+          noMaskedUrlPaste.enable = true;
+          noMosaic.enable = true;
+          noPendingCount.enable = true;
+          noProfileThemes.enable = true;
+          noTypingAnimation.enable = true;
+          noUnblockToJump.enable = true;
+          onePingPerDm.enable = true;
+          pauseInvitesForever.enable = true;
+          pictureInPicture.enable = true;
+          platformIndicators.enable = true;
+          previewMessage.enable = true;
+          questify.enable = false;
+          readAllNotificationsButton.enable = true;
+          relationshipNotifier.enable = true;
+          replyTimestamp.enable = true;
+          revealAllSpoilers.enable = true;
+          serverInfo.enable = true;
+          serverListIndicators.enable = true;
+          showBadgesInChat.enable = true;
+          showConnections.enable = true;
+          showTimeoutDuration.enable = true;
+          silentTyping.enable = true;
+          streamerModeOnStream.enable = true;
+          themeAttributes.enable = true;
+          translate.enable = true;
+          typingIndicator.enable = true;
+          typingTweaks.enable = true;
+          unindent.enable = true;
+          unlockedAvatarZoom.enable = true;
+          userVoiceShow.enable = true;
+          validReply.enable = true;
+          validUser.enable = true;
+          viewIcons.enable = true;
+          voiceChatDoubleClick.enable = true;
+          volumeBooster.enable = true;
+          youtubeAdblock.enable = true;
+        };
+      };
+    };
+  };
+}
