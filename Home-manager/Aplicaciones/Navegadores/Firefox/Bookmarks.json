@@ -1,0 +1,33 @@
+[
+  {
+    "name": "Bookmarks Toolbar",
+    "toolbar": true,
+    "bookmarks": [
+      {
+        "name": "Codeberg",
+        "url": "https://codeberg.org/"
+      },
+      {
+        "name": "Youtube",
+        "url": "https://www.youtube.com/"
+      },
+      {
+        "name": "NixOS",
+        "bookmarks": [
+          {
+            "name": "MyNixOS",
+            "url": "https://mynixos.com/"
+          },
+          {
+            "name": "NixOS - Packages",
+            "url": "https://search.nixos.org/packages"
+          },
+          {
+            "name": "NixOS - Wiki",
+            "url": "https://wiki.nixos.org/wiki/NixOS_Wiki"
+          }
+        ]
+      }
+    ]
+  }
+]
