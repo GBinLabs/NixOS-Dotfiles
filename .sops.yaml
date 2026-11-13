@@ -1,0 +1,7 @@
+keys:
+  - &primary age1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+creation_rules:
+  - path_regex: Secrets/.*\.yaml$
+    key_groups:
+      - age:
+          - *primary
