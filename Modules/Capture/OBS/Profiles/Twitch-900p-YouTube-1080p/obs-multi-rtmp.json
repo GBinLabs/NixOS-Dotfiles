@@ -1,0 +1,51 @@
+{
+  "targets": [
+    {
+      "id": "2631382696",
+      "name": "Starvios",
+      "protocol": "RTMP",
+      "service-param": {
+        "server": "rtmps://aa90cc170447.global-contribute.live-video.net:443/app/",
+        "key": "__STARVIOS_STREAM_KEY__",
+        "use_auth": false
+      },
+      "output-param": {
+        "bind_ip": "default",
+        "drop_threshold_ms": 700,
+        "max_shutdown_time_sec": 30,
+        "pframe_drop_threshold_ms": 900
+      },
+      "sync-start": true,
+      "sync-stop": true,
+      "video-config": "starvios-video",
+      "audio-config": "starvios-audio"
+    }
+  ],
+  "video_configs": [
+    {
+      "id": "starvios-video",
+      "encoder": "ffmpeg_vaapi_tex",
+      "scene": "Starvios: Directo",
+      "resolution": "1600x900",
+      "fps-denumerator": 1,
+      "param": {
+        "vaapi_device": "/dev/dri/by-path/pci-0000:2b:00.0-render",
+        "rate_control": "CBR",
+        "bitrate": 6000,
+        "keyint_sec": 2,
+        "bf": 0
+      }
+    }
+  ],
+  "audio_configs": [
+    {
+      "id": "starvios-audio",
+      "encoder": "ffmpeg_aac",
+      "mixerId": 2,
+      "param": {
+        "bitrate": 160
+      },
+      "audioTracks": []
+    }
+  ]
+}
