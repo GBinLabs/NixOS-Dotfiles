@@ -1,0 +1,112 @@
+--- a/src-tauri/src/input/mod.rs
++++ b/src-tauri/src/input/mod.rs
+@@ -76,3 +76,4 @@
+     MouseButton {
+         button: u8,
++        pressed: bool,
+     },
+@@ -347,4 +348,18 @@
+             // Analog motion / gamepad axes / connection feed the device widget
+             // (via the 60 Hz emitter), never the popup stack.
+             match &event {
++                RawInput::MouseButton { button, pressed } => {
++                    if cfg.show_mouse_click {
++                        let payload = serde_json::json!({ "button": button, "pressed": pressed });
++                        let _ = app.emit_to("overlay", "mouse-button", &payload);
++                        if crate::obs_server::has_clients(&app) {
++                            crate::obs_server::broadcast(&app, "mouse-button", &payload.to_string());
++                        }
++                    }
++                    // In keyboard mode the persistent M1-M5 widget replaces popups.
++                    // Releases must never generate a click popup.
++                    if !*pressed || cfg.display_style == "keyboard" {
++                        continue;
++                    }
++                }
+                 RawInput::MouseMotion { dx, dy } => {
+@@ -420,4 +435,4 @@
+-                RawInput::MouseButton { button } => {
++                RawInput::MouseButton { button, .. } => {
+                     if !cfg.show_mouse_click {
+                         continue;
+                     }
+--- a/src-tauri/src/input/evdev_backend.rs
++++ b/src-tauri/src/input/evdev_backend.rs
+@@ -140,7 +140,7 @@
+-    // Mouse buttons (BTN_*)
++    // Mouse buttons: forward both press (1) and release (0) events.
+     if let Some(button) = mouse_button(code) {
+-        if value == 1 {
+-            let _ = tx.send(RawInput::MouseButton { button });
++        if value == 0 || value == 1 {
++            let _ = tx.send(RawInput::MouseButton { button, pressed: value == 1 });
+         }
+         return;
+     }
+--- a/src/devices.js
++++ b/src/devices.js
+@@ -36,1 +36,1 @@
+-let deviceLayer, mouseWidget, gamepadWidget, mouseDot, leftDot, rightDot, ltFill, rtFill;
++let deviceLayer, mouseWidget, gamepadWidget, mouseDot, leftDot, rightDot, ltFill, rtFill, mouseButtons;
+@@ -100,2 +100,9 @@
++// Held mouse buttons use separate down/up events; no artificial timeout.
++function onMouseButton(event) {
++  if (!event || !Number.isInteger(event.button) || event.button < 1 || event.button > 5) return;
++  if (!mouseButtons) return;
++  mouseButtons.children[event.button - 1].classList.toggle("active", event.pressed === true);
++}
++
+ let lastTs = 0;
+ function frame(ts) {
+@@ -119,4 +126,14 @@
+ async function init() {
+   deviceLayer = document.getElementById("deviceLayer");
+   mouseWidget = document.getElementById("mouseWidget");
++  // Keep a small row of permanent M1-M5 indicators above the movement ring.
++  mouseButtons = document.createElement("div");
++  mouseButtons.id = "mouseButtons";
++  for (let i = 1; i <= 5; i++) {
++    const key = document.createElement("div");
++    key.className = "mouse-key";
++    key.textContent = `M${i}`;
++    mouseButtons.appendChild(key);
++  }
++  mouseWidget.prepend(mouseButtons);
+   gamepadWidget = document.getElementById("gamepadWidget");
+@@ -133,2 +150,3 @@
+   await tauriEvent.listen("device-state", (e) => onDeviceState(e.payload));
++  await tauriEvent.listen("mouse-button", (e) => onMouseButton(e.payload));
+   await tauriEvent.listen("config-updated", (e) => onConfig(e.payload));
+--- a/src/style.css
++++ b/src/style.css
+@@ -1,2 +1,30 @@
++/* Compact mouse controls: five permanent light-up buttons above the ring. */
++#deviceLayer #mouseWidget {
++  flex-direction: column;
++  gap: 8px;
++}
++#mouseButtons {
++  display: grid;
++  grid-template-columns: repeat(5, 27px);
++  gap: 4px;
++}
++.mouse-key {
++  box-sizing: border-box;
++  height: 28px;
++  border: 1px solid #35536A;
++  border-radius: 6px;
++  background: #17364C;
++  color: #E7EFF7;
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  font: 600 12px/1 system-ui, sans-serif;
++  transition: background-color 60ms ease-out, box-shadow 60ms ease-out;
++}
++.mouse-key.active {
++  background: #78B4E3;
++  color: #081B2C;
++  box-shadow: 0 0 9px #78B4E388;
++}
+ html,
+ body {

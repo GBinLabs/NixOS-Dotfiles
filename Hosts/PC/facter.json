@@ -1,0 +1,3 @@
+{
+  "_comentario_": "Esto es un dummy, se debe generar con 'nix-shell -p nixos-facter --run nixos-facter > facter.json'"
+}
